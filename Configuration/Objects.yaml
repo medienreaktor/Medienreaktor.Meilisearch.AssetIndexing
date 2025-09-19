@@ -1,0 +1,9 @@
+Medienreaktor\Meilisearch\AssetIndexing\Indexer\AssetIndexer:
+  properties:
+    indexClient:
+      object:
+        factoryObjectName: Medienreaktor\Meilisearch\Factory\IndexFactory
+        factoryMethodName: create
+        arguments:
+          1:
+            value: 'neos'

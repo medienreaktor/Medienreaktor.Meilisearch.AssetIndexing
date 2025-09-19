@@ -1,0 +1,42 @@
+Medienreaktor:
+  Meilisearch:
+    AssetIndexing:
+      enable: true
+      chunking:
+        enabled: true
+        # Adaptive chunking configuration (new)
+        targets:
+          baseline: 2400        # Base target size in characters for neutral density content
+          denseMin: 1400        # Lower bound when content is very dense (lists / many headings)
+          denseMax: 1700        # Upper bound for dense content window
+          narrativeMin: 3200    # Lower bound when content is narrative (long paragraphs, few headings)
+          narrativeMax: 3600    # Upper bound for narrative content window
+          absoluteMin: 900      # Hard minimum chunk size after all heuristics
+          absoluteMax: 3800     # Hard maximum chunk size and soft split cap
+        heuristics:
+          headingDensityHigh: 1.2     # Headings per 1000 chars threshold for dense mode
+          paragraphDensityHigh: 2.0   # Paragraphs per 1000 chars threshold for dense mode
+          listDensityHigh: 0.35       # Ratio of list lines to total lines for dense mode
+          longParagraphLen: 450       # Avg paragraph length threshold to begin narrative expansion
+          longParagraphLenMaxBoost: 400 # Additional chars expansion span driver (maps to narrativeMax)
+        merge:
+          smallSectionThreshold: 200  # Sections below this get forward-merged to reduce fragmentation
+        flush:
+          minFillFactor: 0.3          # Need at least 30% of target before allowing an early flush
+        oversized:
+          softSplitCap: 3800          # Same as targets.absoluteMax (dup for clarity)
+        overlap:
+          enabled: false              # Currently not applied; reserved for future use
+          smallTargetPercent: 0.08    # Potential overlap when target in dense window
+          largeTargetPercent: 0.12    # Potential overlap when target in narrative/baseline window
+          minChars: 300               # Minimum overlap size when enabled
+      neededAttributesForIndex: []
+      mediaTypeMapping:
+        image/: 'Neos.Media:Image'
+        video/: 'Neos.Media:Video'
+        application/pdf: 'Neos.Media:Document.Pdf'
+      allowedMediaTypePrefixes:
+        - 'application/pdf'
+    settings:
+      filterableAttributes:
+        - '__isAsset'
