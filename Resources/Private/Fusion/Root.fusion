@@ -1,17 +1,13 @@
 # Root Fusion for Medienreaktor.Meilisearch.AssetIndexing
 
-prototype(Medienreaktor.Meilisearch.DocumentAsset) < prototype(Neos.Neos:Shortcut) {
-    # simple link rendering to the asset
-    @context.assetUri = ${q(node).property('asset') ? Neos.Media:uri.asset(q(node).property('asset')) : ''}
-    title = ${q(node).property('title') || q(node).property('asset').label || q(node).property('asset').resource.filename}
-    # render just an anchor tag
-    renderer = afx`<a href="{@context.assetUri}" target="_blank">{props.title}</a>`
-}
+// prototype(Medienreaktor.Meilisearch.DocumentAsset) < prototype(Neos.Neos:Shortcut) {
+//     renderer = ''
+// }
 
-prototype(Neos.Media:Document.Pdf) < prototype(Neos.Neos:Shortcut) {
-    renderer = 'Test'
-}
+// prototype(Neos.Media:Document.Pdf) < prototype(Neos.Neos:Shortcut) {
+//     renderer = ''
+// }
 
-prototype(Neos.Media:Document.Pdf.SearchResult) < prototype(Neos.Neos:Shortcut) {
-    renderer = 'Test'
-}
+// prototype(Neos.Media:Document.Pdf.SearchResult) < prototype(Neos.Neos:Shortcut) {
+//     renderer = ''
+// }
