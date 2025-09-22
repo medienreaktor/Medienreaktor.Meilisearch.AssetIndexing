@@ -116,39 +116,15 @@ class AssetIndexer
     protected $chunkingEnabled = true;
 
     /**
-     * Return Flow persistence identifier of an asset.
-     * @param AssetInterface $asset
-     * @return string
+     * Index all assets based on recorded usages. Optionally purge existing asset documents first.
+     *
+     * @param bool $purgeDocuments Default false: perform a purge of all existing asset documents before indexing
      */
-    public function getPersistenceIdentifier(AssetInterface $asset): string
+    public function indexAll(bool $purgeDocuments = false): void
     {
-        return (string)$this->persistenceManager->getIdentifierByObject($asset);
-    }
-
-    /**
-     * Collect all usages (materialize QueryResult to array) for an asset id.
-     * @param string $assetId Asset persistence identifier
-     * @return array<int,mixed>
-     */
-    public function getUsagesForAsset(string $assetId): array
-    {
-        $result = [];
-        foreach ($this->usageStorage->getUsages($assetId) as $usage) {
-            $result[] = $usage;
+        if ($purgeDocuments) {
+            $this->purgeAllAssetDocuments();
         }
-        return $result;
-    }
-
-    /**
-     * Full reindex: purge all existing asset documents and rebuild from usage table.
-     * Performs grouping by asset id and indexes each asset with dimension variants.
-     * @return void
-     */
-    public function reindexAll(): void
-    {
-        // 1. Remove all existing asset documents
-        $this->purgeAllAssetDocuments();
-        // 2. Rebuild from current usages
         $usages = $this->usageStorage->getUsagesForService('neos_cr');
         $grouped = [];
         foreach ($usages as $usage) {
@@ -259,6 +235,30 @@ class AssetIndexer
         }
 
         if ($documents) { $this->indexClient->addDocuments($documents); }
+    }
+
+    /**
+     * Return Flow persistence identifier of an asset.
+     * @param AssetInterface $asset
+     * @return string
+     */
+    public function getPersistenceIdentifier(AssetInterface $asset): string
+    {
+        return (string)$this->persistenceManager->getIdentifierByObject($asset);
+    }
+
+    /**
+     * Collect all usages (materialize QueryResult to array) for an asset id.
+     * @param string $assetId Asset persistence identifier
+     * @return array<int,mixed>
+     */
+    public function getUsagesForAsset(string $assetId): array
+    {
+        $result = [];
+        foreach ($this->usageStorage->getUsages($assetId) as $usage) {
+            $result[] = $usage;
+        }
+        return $result;
     }
 
     /**

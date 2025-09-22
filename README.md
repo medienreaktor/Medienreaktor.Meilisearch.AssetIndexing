@@ -2,6 +2,13 @@
 
 Robust asset indexing for Neos CMS + Meilisearch focusing on high quality PDF text extraction and adaptive, RAG‑friendly chunk generation.
 
+> Note: Determining *which* assets (and for which dimension combinations) are indexed relies on **Flowpack.EntityUsage** (package `flowpack/neos-asset-usage`). Only assets referenced via EntityUsage (service `neos_cr`) are considered. Ensure the asset is actually used (referenced in content) before starting an index run.
+> If usages seem outdated, refresh them with:
+> ```bash
+> ./flow assetusage:update
+> ```
+> (See https://github.com/Flowpack/Flowpack.Neos.AssetUsage )
+
 ## 1. Overview
 This package augments a unified Meilisearch index with media asset documents (e.g. PDFs, images). PDF files are split into semantically aware chunks for improved semantic search and retrieval‑augmented generation (RAG) scenarios. Non‑PDF assets are indexed as single descriptive documents.
 
@@ -40,6 +47,49 @@ Ensure the package is loaded (Flow will auto-detect via composer). Run cache flu
 ```bash
 ./flow flow:cache:flush
 ```
+After installation verify `flowpack/neos-asset-usage` is active (hard requirement). If missing:
+```bash
+composer require flowpack/neos-asset-usage
+```
+Then clear caches if needed:
+```bash
+./flow flow:cache:flush
+```
+
+## 5.1 CLI Commands
+Flow CLI commands provided by `AssetIndexCommandController`:
+
+Full reindex (purge + rebuild by default):
+```bash
+./flow assetindex:indexAll
+```
+Run with purge (additive):
+```bash
+./flow assetindex:indexAll --purgeDocuments true
+```
+Shorthand (same as above without purge):
+```bash
+./flow assetindex:indexassets
+```
+Reindex a single asset (delete existing docs first):
+```bash
+./flow assetindex:reindexasset --assetIdentifier <uuid>
+```
+Remove a single asset from index (all dimension variants):
+```bash
+./flow assetindex:removeasset --assetIdentifier <uuid>
+```
+Purge all asset documents only:
+```bash
+./flow assetindex:purgeindexeddocuments
+```
+
+### 5.2 Refreshing Asset Usages
+If you added or removed references and they are not reflected yet, run the usage update provided by Flowpack.Neos.AssetUsage before (re)indexing:
+```bash
+./flow assetusage:update
+```
+This regenerates the underlying usage table that drives which assets + dimension combinations are indexed. Repository: https://github.com/Flowpack/Flowpack.Neos.AssetUsage
 
 ## 6. Configuration
 Add (or merge) into your `Configuration/Settings.yaml`:
@@ -156,12 +206,16 @@ Examples:
 If an asset exposes `getTags()`, each tag label is extracted (via `getLabel()`), de-duplicated, sorted, and appended under a `### Tags` section at the end of the chunk/base text. Also stored as the `tags` array field.
 
 ## 11. Reindexing & Maintenance
-Public methods (API surface from `AssetIndexer`):
-- `reindexAll()` – purge all existing asset docs then rebuild from usages.
-- `reindexAssetByIdentifier($assetId)` – remove + reindex a single asset.
-- `removeAsset(AssetInterface $asset)` / `removeAssetByIdentifier($id)` – delete documents only.
+Public methods (class `AssetIndexer`):
 
-(If CLI commands are desired, wrap these calls in a Flow CommandController – not included here.)
+- `indexAll(bool $purgeDocuments = true)` – New universal entry (optionally skip purge).
+- `reindexAssetByIdentifier($assetId)` – Remove + reindex a single asset.
+- `removeAsset(...)` / `removeAssetByIdentifier($id)` – Delete all documents of an asset.
+- `purgeAllAssetDocuments()` – Delete all asset documents (prefix `asset_`).
+
+CLI mapping see section 5.1.
+
+> Important: Without EntityUsage records (Flowpack.EntityUsage) no dimensions are resolved and an asset will not be indexed. If results are empty, first verify references and the usage table.
 
 ## 12. Extensibility Hooks
 - `mediaTypeMapping` – Map MIME prefixes to custom pseudo node types.
