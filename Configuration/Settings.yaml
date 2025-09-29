@@ -6,13 +6,13 @@ Medienreaktor:
         enabled: true
         # Adaptive chunking configuration (new)
         targets:
-          baseline: 2400        # Base target size in characters for neutral density content
-          denseMin: 1400        # Lower bound when content is very dense (lists / many headings)
-          denseMax: 1700        # Upper bound for dense content window
-          narrativeMin: 3200    # Lower bound when content is narrative (long paragraphs, few headings)
-          narrativeMax: 3600    # Upper bound for narrative content window
-          absoluteMin: 900      # Hard minimum chunk size after all heuristics
-          absoluteMax: 3800     # Hard maximum chunk size and soft split cap
+          baseline: 1200        # Base target size in characters for neutral density content
+          denseMin: 800        # Lower bound when content is very dense (lists / many headings)
+          denseMax: 1100        # Upper bound for dense content window
+          narrativeMin: 1300    # Lower bound when content is narrative (long paragraphs, few headings)
+          narrativeMax: 1600    # Upper bound for narrative content window
+          absoluteMin: 600      # Hard minimum chunk size after all heuristics
+          absoluteMax: 1600     # Hard maximum chunk size and soft split cap
         heuristics:
           headingDensityHigh: 1.2     # Headings per 1000 chars threshold for dense mode
           paragraphDensityHigh: 2.0   # Paragraphs per 1000 chars threshold for dense mode
@@ -24,7 +24,7 @@ Medienreaktor:
         flush:
           minFillFactor: 0.3          # Need at least 30% of target before allowing an early flush
         oversized:
-          softSplitCap: 3800          # Same as targets.absoluteMax (dup for clarity)
+          softSplitCap: 1600          # Same as targets.absoluteMax (dup for clarity)
         overlap:
           enabled: false              # Currently not applied; reserved for future use
           smallTargetPercent: 0.08    # Potential overlap when target in dense window
@@ -34,7 +34,7 @@ Medienreaktor:
       mediaTypeMapping:
         image/: 'Neos.Media:Image'
         video/: 'Neos.Media:Video'
-        application/pdf: 'Neos.Media:Document.Pdf'
+        application/pdf: 'Medienreaktor.Site:Document.Pdf'
       allowedMediaTypePrefixes:
         - 'application/pdf'
     settings:

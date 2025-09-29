@@ -185,7 +185,7 @@ Common fields (non-exhaustive):
 - `__nodeType`, `__nodeTypeAndSupertypes` – pseudo type + classification (`Neos.Media:Asset`).
 - `__uri` – deep link (PDF includes page anchor).
 - `__markdown` – primary textual payload (no strict markdown semantics).
-- `__fulltext`, `__fultext` – (both) arrays wrapping text for compatibility.
+- `__fulltext` – array wrapping text for hybrid search compatibility.
 - `__pageStart`, `__pageEnd`, `__pages` – PDF chunk page span metadata.
 - `__chunkNumber` – zero-based for PDFs.
 - `headings` (PDF chunks) – heading strings present in the chunk.
