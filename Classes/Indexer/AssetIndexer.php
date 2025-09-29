@@ -145,7 +145,6 @@ class AssetIndexer
     {
         $filter = ['__nodeTypeAndSupertypes = "Neos.Media:Asset"'];
         $this->indexClient->deleteByFilter($filter);
-        echo 'done';
     }
 
     /**
