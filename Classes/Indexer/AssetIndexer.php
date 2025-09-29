@@ -139,24 +139,13 @@ class AssetIndexer
     }
 
     /**
-     * Purge all asset documents (id prefix asset_) using iterative search & delete batches.
-     * NOTE: Could be optimized via index-native filter deletion if supported by IndexInterface.
-     * @return void
+     * Purge all Asset-Dokumente via Index-Filter (nutzt deleteByFilter auf dem IndexClient).
      */
     public function purgeAllAssetDocuments(): void
     {
-        do {
-            $result = $this->indexClient->search('*', [
-                'filter' => '__nodeTypeAndSupertypes = "Neos.Media:Asset"'
-            ]);
-            $hits = $result->getHits();
-            if (!$hits) { break; }
-            $ids = [];
-            foreach ($hits as $hit) {
-                if (!empty($hit['id'])) { $ids[] = $hit['id']; }
-            }
-            if ($ids) { $this->indexClient->deleteDocuments($ids); }
-        } while (!empty($hits));
+        $filter = ['__nodeTypeAndSupertypes = "Neos.Media:Asset"'];
+        $this->indexClient->deleteByFilter($filter);
+        echo 'done';
     }
 
     /**
@@ -270,7 +259,7 @@ class AssetIndexer
      * @param string $siteName Site name resolved from usages
      * @return array<int,array<string,mixed>>|array<string,mixed>|null
      */
-    protected function buildDocuments(AssetInterface $asset, array $dimensions, string $hash, string $siteName): array|NULL
+    protected function buildDocuments(AssetInterface $asset, array $dimensions, string $hash, string $siteName): array|null
     {
         $this->logger->debug(sprintf('Building documents for asset %s with dimensions %s', $asset->getTitle(), json_encode($dimensions)));
         $resource       = $asset->getResource();
