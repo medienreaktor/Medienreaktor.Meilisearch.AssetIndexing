@@ -1,13 +1,15 @@
 {
   "name": "medienreaktor/meilisearch-asset-indexing",
   "type": "neos-package",
-  "description": "Indexes Neos Media Assets into Meilisearch using Medienreaktor.Meilisearch services",
+  "description": "Indexes Neos Media Assets into Meilisearch using Medienreaktor.Meilisearch services (Neos 9 compatible)",
+  "license": "MIT",
   "require": {
-    "neos/flow": "*",
-    "neos/neos": "*",
-    "neos/media": "*",
+    "neos/flow": "^9.1",
+    "neos/neos": "^9.1",
+    "neos/media": "^9.1",
+    "neos/contentrepositoryregistry": "^9.1",
+    "neos/contentrepository-core": "^9.1",
     "medienreaktor/meilisearch": "*",
-    "flowpack/neos-asset-usage": "*",
     "smalot/pdfparser": "^2.6",
     "spatie/pdf-to-text": "^1.54"
   },

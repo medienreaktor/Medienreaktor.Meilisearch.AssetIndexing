@@ -21,10 +21,13 @@ class AssetIndexCommandController extends CommandController
     protected AssetRepository $assetRepository;
 
     /**
-     * Perform (re)indexing of all referenced assets. Optional global purge can be disabled (--purgeDocuments false)
-     * @param bool $purgeDocuments Default false: purge all existing asset documents before indexing
+     * (Re)index all assets referenced in the live workspace.
+     *
+     * Usage: ./flow assetindex:indexall [--purge-documents]
+     *
+     * @param bool $purgeDocuments If true, remove all existing asset documents from the index before reindexing.
      */
-    protected function indexAll(bool $purgeDocuments = false): void
+    public function indexAllCommand(bool $purgeDocuments = false): void
     {
         $this->outputLine('Index assets (purgeDocuments=%s) ...', [$purgeDocuments ? 'true' : 'false']);
         $this->assetIndexer->indexAll($purgeDocuments);

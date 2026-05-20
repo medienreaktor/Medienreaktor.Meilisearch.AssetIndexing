@@ -1,13 +1,20 @@
 Medienreaktor:
   Meilisearch:
+    # Extend the main Meilisearch index settings so asset-specific fields become filterable.
+    settings:
+      filterableAttributes:
+        - '__isAsset'
+
     AssetIndexing:
       enable: true
+      # Which content repository to query for asset usages (Neos 9 default is 'default').
+      contentRepositoryId: 'default'
       chunking:
         enabled: true
-        # Adaptive chunking configuration (new)
+        # Adaptive chunking configuration
         targets:
           baseline: 1200        # Base target size in characters for neutral density content
-          denseMin: 800        # Lower bound when content is very dense (lists / many headings)
+          denseMin: 800         # Lower bound when content is very dense (lists / many headings)
           denseMax: 1100        # Upper bound for dense content window
           narrativeMin: 1300    # Lower bound when content is narrative (long paragraphs, few headings)
           narrativeMax: 1600    # Upper bound for narrative content window
@@ -27,16 +34,12 @@ Medienreaktor:
           softSplitCap: 1600          # Same as targets.absoluteMax (dup for clarity)
         overlap:
           enabled: false              # Currently not applied; reserved for future use
-          smallTargetPercent: 0.08    # Potential overlap when target in dense window
-          largeTargetPercent: 0.12    # Potential overlap when target in narrative/baseline window
-          minChars: 300               # Minimum overlap size when enabled
-      neededAttributesForIndex: []
+          smallTargetPercent: 0.08
+          largeTargetPercent: 0.12
+          minChars: 300
       mediaTypeMapping:
         image/: 'Neos.Media:Image'
         video/: 'Neos.Media:Video'
         application/pdf: 'Medienreaktor.Site:Document.Pdf'
       allowedMediaTypePrefixes:
         - 'application/pdf'
-    settings:
-      filterableAttributes:
-        - '__isAsset'
