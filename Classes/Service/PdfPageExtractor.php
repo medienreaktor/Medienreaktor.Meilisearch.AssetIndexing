@@ -15,7 +15,8 @@ use Spatie\PdfToText\Pdf as PdfToText;
  */
 class PdfPageExtractor
 {
-    private const PDF_TEXT_GLOBAL_OPTIONS = ['-enc UTF-8', '-layout', '-nopgbrk'];
+    // No `-layout`: it interleaves multi-column text; reading-order keeps prose contiguous.
+    private const PDF_TEXT_GLOBAL_OPTIONS = ['-enc UTF-8', '-nopgbrk'];
 
     /**
      * @Flow\Inject
