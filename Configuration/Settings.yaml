@@ -5,6 +5,14 @@ Medienreaktor:
       filterableAttributes:
         - '__isAsset'
 
+    indexing:
+      # Asset documents share the node index, but a node rebuild does not produce
+      # them: "nodeindex:rebuild" builds into a temporary index and swaps it live,
+      # which would drop every asset document. Listing them here copies them over
+      # before the swap, so the PDF search survives a node rebuild.
+      preserveOnRebuild:
+        assets: '__isAsset = true'
+
     AssetIndexing:
       enable: true
       # Which content repository to query for asset usages (Neos 9 default is 'default').

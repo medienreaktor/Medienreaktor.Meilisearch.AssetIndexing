@@ -84,7 +84,29 @@ Purge all asset documents only:
 ./flow assetindex:purgeindexeddocuments
 ```
 
-### 5.2 Refreshing Asset Usages
+### 5.2 Node Rebuilds
+
+Asset documents live in the same index as the node documents. `flow
+nodeindex:rebuild` builds the node documents into a temporary index and swaps it
+live, which on its own would drop every asset document.
+
+This package therefore ships
+
+```yaml
+Medienreaktor:
+  Meilisearch:
+    indexing:
+      preserveOnRebuild:
+        assets: '__isAsset = true'
+```
+
+so the rebuild carries the existing asset documents over before the swap. No
+asset reindex is needed afterwards. This requires a `medienreaktor/meilisearch`
+version that knows `preserveOnRebuild`; with an older one the setting is inert
+and a node rebuild does drop the asset documents, so an `assetindex:indexall` has
+to follow it.
+
+### 5.3 Refreshing Asset Usages
 If you added or removed references and they are not reflected yet, run the usage update provided by Flowpack.Neos.AssetUsage before (re)indexing:
 ```bash
 ./flow assetusage:update
