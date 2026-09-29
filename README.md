@@ -152,6 +152,9 @@ Medienreaktor:
         - application/pdf
         - image/
 ```
+The package adds `__isAsset: true` to `Medienreaktor.Meilisearch.settings.filterableAttributes`.
+Since `medienreaktor/meilisearch` 3.0 that setting is a map, so it merges with the
+attributes of other packages by name instead of overwriting them by position.
 If `chunking.enabled = false`, PDFs are indexed as a single document with full concatenated text (page breaks separated by a marker).
 
 ## 7. PDF Adaptive Chunking
@@ -257,5 +260,32 @@ CLI mapping see section 5.1.
 - Adaptive re-chunking feedback loop (query success signals).
 
 ---
+## 15. Frontend Search (pages + PDFs)
+`SearchService` runs one relevance-ranked query over pages and PDFs of one dimension
+space point. PDF chunks are collapsed to one hit per document (`distinct: __identifier`,
+requires Meilisearch >= 1.9). For the PDFs on the current result page a second query
+collects every page the term was found on.
+
+In Fusion:
+```
+results = ${AssetIndexing.Search.results(documentNode, query, page, perPage)}
+```
+
+The result's `type` tells the two outcomes apart:
+
+- `result` – `totalHits`, `totalPages` and `hits`. Each hit's `type` is `node`
+  (`title`, `uri`, `snippet`) or `pdf` (`title`, `filename`, `filesize`, `uri`,
+  `snippet`, `occurrences` with `page`, `snippet`, `uri`).
+- `unavailable` – Meilisearch did not answer. The cause is logged at `error` with the
+  query and dimensions hash; render a notice instead of "no results".
+
+If only the occurrence lookup fails, each PDF hit carries the page of its best-ranked
+chunk and a warning is logged. PDF links carry `#page=N&search=<term>`, which browser
+PDF viewers use to open the page and mark the term. Snippets are HTML with the term in
+`<em>`.
+
+Requires `__identifier` and `__isAsset` in `Medienreaktor.Meilisearch.settings.filterableAttributes`;
+both are configured by `medienreaktor/meilisearch` and this package.
+
 ### Feedback
 Contributions, issue reports, and suggestions welcome. Provide reproducible examples (asset type, pages, excerpt) for chunking quality discussions.
