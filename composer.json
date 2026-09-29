@@ -9,7 +9,7 @@
     "neos/media": "^9.1",
     "neos/contentrepositoryregistry": "^9.1",
     "neos/contentrepository-core": "^9.1",
-    "medienreaktor/meilisearch": "*",
+    "medienreaktor/meilisearch": "^3.0",
     "smalot/pdfparser": "^2.6",
     "spatie/pdf-to-text": "^1.54"
   },
@@ -21,6 +21,9 @@
   "extra": {
     "neos": {
       "package-key": "Medienreaktor.Meilisearch.AssetIndexing"
+    },
+    "branch-alias": {
+      "dev-neos9": "3.x-dev"
     }
   }
 }

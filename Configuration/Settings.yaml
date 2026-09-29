@@ -1,9 +1,14 @@
+Neos:
+  Fusion:
+    defaultContext:
+      AssetIndexing.Search: 'Medienreaktor\Meilisearch\AssetIndexing\Eel\SearchHelper'
+
 Medienreaktor:
   Meilisearch:
     # Extend the main Meilisearch index settings so asset-specific fields become filterable.
     settings:
       filterableAttributes:
-        - '__isAsset'
+        __isAsset: true
 
     indexing:
       # Asset documents share the node index, but a node rebuild does not produce
