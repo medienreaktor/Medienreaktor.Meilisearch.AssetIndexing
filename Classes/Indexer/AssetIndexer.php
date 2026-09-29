@@ -142,10 +142,7 @@ class AssetIndexer
      */
     public function reindexAssetByIdentifier(string $assetId): void
     {
-        $existing = (array)$this->indexClient->findAllIdentifiersByIdentifier('asset_' . $assetId);
-        if ($existing) {
-            $this->indexClient->deleteDocuments($existing);
-        }
+        $this->removeAssetByIdentifier($assetId);
         $usages = $this->getUsagesForAsset($assetId);
         if ($usages === []) {
             return;
@@ -169,10 +166,9 @@ class AssetIndexer
      */
     public function removeAssetByIdentifier(string $assetPersistenceId): void
     {
-        $ids = (array)$this->indexClient->findAllIdentifiersByIdentifier('asset_' . $assetPersistenceId);
-        if ($ids) {
-            $this->indexClient->deleteDocuments($ids);
-        }
+        // By filter rather than search-then-delete: a search returns at most 20 hits,
+        // and a PDF has one document per chunk and dimension, so stale chunks stayed.
+        $this->indexClient->deleteByFilter('__identifier = "asset_' . $assetPersistenceId . '"');
     }
 
     /**
